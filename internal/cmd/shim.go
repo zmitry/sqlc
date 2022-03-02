@@ -58,6 +58,7 @@ func pluginSettings(cs config.CombinedSettings) *plugin.Settings {
 		Python:    pluginPythonCode(cs.Python),
 		Kotlin:    pluginKotlinCode(cs.Kotlin),
 		Go:        pluginGoCode(cs.Go),
+		Wasm:      pluginWASM(cs.WASM),
 	}
 }
 
@@ -91,6 +92,13 @@ func pluginGoCode(s config.SQLGo) *plugin.GoCode {
 		OutputModelsFileName:      s.OutputModelsFileName,
 		OutputQuerierFileName:     s.OutputQuerierFileName,
 		OutputFilesSuffix:         s.OutputFilesSuffix,
+	}
+}
+
+func pluginWASM(s config.SQLWASM) *plugin.WASM {
+	return &plugin.WASM{
+		Out:  s.Out,
+		Path: s.Path,
 	}
 }
 

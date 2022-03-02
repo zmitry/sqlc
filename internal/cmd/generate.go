@@ -14,6 +14,7 @@ import (
 	"github.com/kyleconroy/sqlc/internal/codegen/golang"
 	"github.com/kyleconroy/sqlc/internal/codegen/kotlin"
 	"github.com/kyleconroy/sqlc/internal/codegen/python"
+	"github.com/kyleconroy/sqlc/internal/codegen/wasm"
 	"github.com/kyleconroy/sqlc/internal/compiler"
 	"github.com/kyleconroy/sqlc/internal/config"
 	"github.com/kyleconroy/sqlc/internal/debug"
@@ -132,6 +133,12 @@ func Generate(ctx context.Context, e Env, dir, filename string, stderr io.Writer
 				Gen: config.SQLGen{Python: sql.Gen.Python},
 			})
 		}
+		if sql.Gen.WASM != nil {
+			pairs = append(pairs, outPair{
+				SQL: sql,
+				Gen: config.SQLGen{WASM: sql.Gen.WASM},
+			})
+		}
 	}
 
 	for _, sql := range pairs {
@@ -190,6 +197,9 @@ func Generate(ctx context.Context, e Env, dir, filename string, stderr io.Writer
 		var genfunc func(req *plugin.CodeGenRequest) (*plugin.CodeGenResponse, error)
 		var out string
 		switch {
+		case sql.Gen.WASM != nil:
+			out = combo.WASM.Out
+			genfunc = wasm.Generate
 		case sql.Gen.Go != nil:
 			out = combo.Go.Out
 			genfunc = golang.Generate
@@ -202,6 +212,7 @@ func Generate(ctx context.Context, e Env, dir, filename string, stderr io.Writer
 		default:
 			panic("missing language backend")
 		}
+		fmt.Println("out", out)
 		resp, err := genfunc(codeGenRequest(result, combo))
 		if region != nil {
 			region.End()
