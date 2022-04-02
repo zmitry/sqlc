@@ -20,9 +20,9 @@ jobs:
           go-version: 1.18
       - name: Run release linux
         run: | 
-          GOOS="linux" go build ./cmd/sqlc/. -o build/linux
-          GOOS="darwin" go build ./cmd/sqlc/. -o build/mac
-          GOOS=darwin GOARCH=arm64 go build ./cmd/sqlc/. -o build/mac-arm
+          CGO_ENABLED=1 GOOS="linux" go build -o ./build/linux-amd64/sqlc ./cmd/sqlc/. 
+          CGO_ENABLED=1  GOOS="darwin" go build -o ./build/darwin-amd64/sqlc ./cmd/sqlc/. 
+          CGO_ENABLED=1  GOOS=darwin GOARCH=arm64  go build -o ./build/darwin-arm64/sqlc ./cmd/sqlc/. 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
