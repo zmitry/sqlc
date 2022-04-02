@@ -18,5 +18,14 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.18
-      - name: Run release
-        run: GOOS="linux" go build ./cmd/sqlc/.
+      - name: Run release linux
+        run: | 
+          GOOS="linux" go build ./cmd/sqlc/. -o build/linux
+          GOOS="darwin" go build ./cmd/sqlc/. -o build/mac
+          GOOS=darwin GOARCH=arm64 go build ./cmd/sqlc/. -o build/mac-arm
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            build/**
