@@ -31,6 +31,7 @@ jobs:
           race: false
           ldflags: -s -w
           buildmode: default
+          working_dir: cmd/sqlc
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
